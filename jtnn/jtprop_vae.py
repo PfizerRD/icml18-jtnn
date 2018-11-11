@@ -24,12 +24,13 @@ def set_batch_nodeID(mol_batch, vocab):
 
 class JTPropVAE(nn.Module):
 
-    def __init__(self, vocab, hidden_size, latent_size, depth):
+    def __init__(self, vocab, hidden_size, latent_size, depth, num_props):
         super(JTPropVAE, self).__init__()
         self.vocab = vocab
         self.hidden_size = hidden_size
         self.latent_size = latent_size
         self.depth = depth
+        self.num_props = num_props
 
         self.embedding = nn.Embedding(vocab.size(), hidden_size)
         self.jtnn = JTNNEncoder(vocab, hidden_size, self.embedding)
@@ -45,7 +46,7 @@ class JTPropVAE(nn.Module):
         self.propNN = nn.Sequential(
                 nn.Linear(self.latent_size, self.hidden_size),
                 nn.Tanh(),
-                nn.Linear(self.hidden_size, 1)
+                nn.Linear(self.hidden_size, self.num_props)
         )
         self.prop_loss = nn.MSELoss()
         self.assm_loss = nn.CrossEntropyLoss(size_average=False)
@@ -95,7 +96,7 @@ class JTPropVAE(nn.Module):
 
         all_vec = torch.cat([tree_vec, mol_vec], dim=1)
         prop_label = create_var(torch.Tensor(prop_batch))
-        prop_loss = self.prop_loss(self.propNN(all_vec).squeeze(), prop_label)
+        prop_loss = self.prop_loss(self.propNN(all_vec), prop_label)
         
         loss = word_loss + topo_loss + assm_loss + 2 * stereo_loss + beta * kl_loss + prop_loss
         return loss, kl_loss.data[0], word_acc, topo_acc, assm_acc, stereo_acc, prop_loss.data[0]

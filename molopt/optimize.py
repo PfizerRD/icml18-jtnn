@@ -24,6 +24,7 @@ parser.add_option("-w", "--hidden", dest="hidden_size", default=200)
 parser.add_option("-l", "--latent", dest="latent_size", default=56)
 parser.add_option("-d", "--depth", dest="depth", default=3)
 parser.add_option("-s", "--sim", dest="cutoff", default=0.0)
+parser.add_option("-n", "--num_props", dest="num_props", default=1)
 opts,args = parser.parse_args()
    
 vocab = [x.strip("\r\n ") for x in open(opts.vocab_path)] 
@@ -33,8 +34,9 @@ hidden_size = int(opts.hidden_size)
 latent_size = int(opts.latent_size)
 depth = int(opts.depth)
 sim_cutoff = float(opts.cutoff)
+num_props = int(opts.num_props)
 
-model = JTPropVAE(vocab, hidden_size, latent_size, depth)
+model = JTPropVAE(vocab, hidden_size, latent_size, depth, num_props)
 model.load_state_dict(torch.load(opts.model_path))
 model = model.cuda()
 

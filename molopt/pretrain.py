@@ -24,6 +24,7 @@ parser.add_option("-b", "--batch", dest="batch_size", default=40)
 parser.add_option("-w", "--hidden", dest="hidden_size", default=200)
 parser.add_option("-l", "--latent", dest="latent_size", default=56)
 parser.add_option("-d", "--depth", dest="depth", default=3)
+parser.add_option("-n", "--num_props", dest="num_props", default=1)
 opts,args = parser.parse_args()
    
 vocab = [x.strip("\r\n ") for x in open(opts.vocab_path)] 
@@ -33,8 +34,9 @@ batch_size = int(opts.batch_size)
 hidden_size = int(opts.hidden_size)
 latent_size = int(opts.latent_size)
 depth = int(opts.depth)
+num_props = int(opts.num_props)
 
-model = JTPropVAE(vocab, hidden_size, latent_size, depth)
+model = JTPropVAE(vocab, hidden_size, latent_size, depth, num_props)
 
 for param in model.parameters():
     if param.dim() == 1:
@@ -49,7 +51,7 @@ optimizer = optim.Adam(model.parameters(), lr=1e-3)
 scheduler = lr_scheduler.ExponentialLR(optimizer, 0.9)
 scheduler.step()
 
-dataset = PropDataset(opts.train_path, opts.prop_path)
+dataset = PropDataset(opts.train_path, opts.prop_path, num_props)
 dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=4, collate_fn=lambda x:x)
 
 MAX_EPOCH = 3

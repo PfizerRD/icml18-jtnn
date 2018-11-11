@@ -20,8 +20,10 @@ class MoleculeDataset(Dataset):
 
 class PropDataset(Dataset):
 
-    def __init__(self, data_file, prop_file):
-        self.prop_data = np.loadtxt(prop_file)
+    def __init__(self, data_file, prop_file, num_props):
+        self.prop_data = np.loadtxt(prop_file, delimiter=',', ndmin=2)
+        if self.prop_data.shape[1] != num_props:
+            raise(ValueError("Property file dimension doesn't match specified number of properties"))
         with open(data_file) as f:
             self.data = [line.strip("\r\n ").split()[0] for line in f]
 
@@ -33,5 +35,5 @@ class PropDataset(Dataset):
         mol_tree = MolTree(smiles)
         mol_tree.recover()
         mol_tree.assemble()
-        return mol_tree, self.prop_data[idx]
+        return mol_tree, self.prop_data[idx, :]
 
