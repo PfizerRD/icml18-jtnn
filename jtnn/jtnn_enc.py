@@ -4,7 +4,7 @@ from collections import deque
 from mol_tree import Vocab, MolTree
 from nnutils import create_var, GRU
 
-MAX_NB = 8
+MAX_NB = 12
 
 class JTNNEncoder(nn.Module):
 
@@ -54,6 +54,9 @@ class JTNNEncoder(nn.Module):
                     h_nei.append(h[(z,x)])
 
                 pad_len = MAX_NB - len(h_nei)
+                if pad_len < 0:
+                    print("pad_len: {}, len: {}".format(pad_len, len(h_nei)))
+                    raise(ValueError())
                 h_nei.extend([padding] * pad_len)
                 cur_h_nei.extend(h_nei)
 

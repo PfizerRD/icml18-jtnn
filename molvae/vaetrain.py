@@ -37,7 +37,7 @@ latent_size = int(opts.latent_size)
 depth = int(opts.depth)
 beta = float(opts.beta)
 lr = float(opts.lr)
-anneal = float(opts.anneal)
+# anneal = float(opts.anneal)
 
 model = JTNNVAE(vocab, hidden_size, latent_size, depth)
 
