@@ -46,7 +46,10 @@ for smiles in data:
     mol = Chem.MolFromSmiles(smiles)
     smiles3D = Chem.MolToSmiles(mol, isomericSmiles=True)
     
-    dec_smiles = model.reconstruct(smiles3D)
+    try:
+        dec_smiles = model.reconstruct(smiles3D)
+    except:
+        continue
     if dec_smiles == smiles3D:
         acc += 1
     tot += 1

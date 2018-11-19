@@ -212,7 +212,9 @@ class JTPropVAE(nn.Module):
 
         visited = []
         for step in xrange(num_iter):
-            prop_val = self.propNN(cur_vec).squeeze()
+            prop_val = self.propNN(cur_vec)#.squeeze()
+            # print(prop_val)
+            # print(cur_vec)
             grad = torch.autograd.grad(prop_val, cur_vec)[0]
             cur_vec = cur_vec.data + lr * grad.data
             cur_vec = create_var(cur_vec, True)
