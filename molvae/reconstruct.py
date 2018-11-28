@@ -40,17 +40,20 @@ with open(opts.test_path) as f:
         s = line.strip("\r\n ").split()[0]
         data.append(s)
 
-acc = 0.0
+acc = 0
 tot = 0
+print("Total test data: {}".format(len(data)))
 for smiles in data:
-    mol = Chem.MolFromSmiles(smiles)
-    smiles3D = Chem.MolToSmiles(mol, isomericSmiles=True)
-    
-    dec_smiles = model.reconstruct(smiles3D)
+    try:
+        mol = Chem.MolFromSmiles(smiles)
+        smiles3D = Chem.MolToSmiles(mol, isomericSmiles=True)
+        dec_smiles = model.reconstruct(smiles3D)
+    except:
+        continue
     if dec_smiles == smiles3D:
         acc += 1
     tot += 1
-    print acc / tot
+
     """
     dec_smiles = model.recon_eval(smiles3D)
     tot += len(dec_smiles)
@@ -59,4 +62,7 @@ for smiles in data:
             acc += 1
     print acc / tot
     """
+
+print("reconstructed {} / {}, accuracy: {}".format(acc, tot, float(acc)/tot))
+    
 

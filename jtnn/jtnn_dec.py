@@ -5,7 +5,7 @@ from nnutils import create_var, GRU
 from chemutils import enum_assemble
 import copy
 
-MAX_NB = 12
+MAX_NB = 15
 MAX_DECODE_LEN = 100
 
 class JTNNDecoder(nn.Module):
@@ -146,6 +146,8 @@ class JTNNDecoder(nn.Module):
             cur_x.append(node_x.wid)
             cur_nei = [h[(node_y.idx,node_x.idx)] for node_y in node_x.neighbors]
             pad_len = MAX_NB - len(cur_nei)
+            if pad_len < 0:
+                raise(ValueError("MAX_NB too small"))
             cur_o_nei.extend(cur_nei)
             cur_o_nei.extend([padding] * pad_len)
 
